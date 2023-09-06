@@ -1,0 +1,229 @@
+<div class="card">
+  <h5>MATERIALES | PROVEEDORES</h5>
+  <p-tabView orientation="left">
+      <p-tabPanel *ngIf="lista" header="Lista" class="line-height-3 m-0">
+
+        <div class="col-12">
+
+
+            <p-toast  key="tst">
+              <ng-template let-message pTemplate="message">
+                <div class="flex flex-column" style="flex: 1">
+                    <div class="text-center">
+                        <h4>{{message.summary}}</h4>
+                        <p innerHtml="{{message.detail}}" style="text-align: left;"></p>
+                    </div>
+                </div>
+              </ng-template>
+            </p-toast>
+
+            <p-table #dt1 [value]="proveedor" dataKey="id_proveedor" [rows]="10" [loading]="loading" [rowHover]="true" styleClass="p-datatable-gridlines" [paginator]="true" [globalFilterFields]="['razonSocial','departamento']" responsiveLayout="scroll">
+            <!-- <p-table [value]="proveedor" dataKey="id_proveedor" [expandedRowKeys]="expandedRows" responsiveLayout="scroll"> -->
+              <ng-template pTemplate="caption">
+                <div class="flex justify-content-between flex-column sm:flex-row">
+                  <button pButton label="Nuevo Proveedor" class="p-button-outlined mb-2" icon="pi pi-plus" (click)="ProveedorNuevo('Nuevo Proveedor','nuevo')"></button>
+                  <span class="p-input-icon-left mb-2">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" #filter (input)="onGlobalFilter(dt1, $event)" placeholder="Nombre / Departamento" class="w-full"/>
+                  </span>
+                </div>
+              </ng-template>
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="width: 3rem"></th>
+                  <th>Nombre
+                    <p-columnFilter type="text" field="razonSocial" display="menu" matchMode="contains"  [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" placeholder="Buscar Proveedor"></p-columnFilter>
+                  </th>
+                  <!-- <th>Image</th> -->
+                  <th>Telefono
+                    <p-columnFilter type="text" field="telefono" display="menu" matchMode="contains"  [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" placeholder="Buscar telefono"></p-columnFilter>
+                  </th>
+                  <th>Regional
+                    <p-columnFilter type="text" field="departamento" display="menu" matchMode="contains"  [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" placeholder="Buscar regional"></p-columnFilter>
+                  </th>
+                  <th>Email</th>
+                  <th style="width: 5rem"></th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-provee let-expanded="expanded">
+                <tr>
+                  <td>
+                    <button *ngIf="provee.contacto_j" type="button" pButton pRipple [pRowToggler]="provee" class="p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                  </td>
+                  <td style="min-width: 12rem;">{{provee.razonSocial}}<i *ngIf="provee.observacion.length>1" class="pi pi-info-circle" (click)="showInfoViaToast(provee.observacion, 'Observaciones')" style="font-size: .8rem; margin-left: .5rem;"></i><br><small style="font-size: .6rem">N-{{provee.nit}}</small></td>
+                  <td style="min-width: 8rem;">{{provee.telefono}}</td>
+                  <td style="min-width: 10rem;">{{provee.departamento}} <i class="pi pi-map-marker"  (click)="showInfoViaToast(provee.direccion, 'Direccion')" style="font-size: .8rem; margin-left: 10px;"></i></td>
+                  <td style="min-width: 10rem;">{{provee.email}}</td>
+                  <td>
+                    <div class="card" style="display: flex; justify-content: center;">
+                      <i class="pi pi-minus-circle" (click)="EliminaProveedor($event, provee.id_proveedor,provee.bitacora)" style="font-size: .8rem; color: red;" pTooltip="Eliminar" tooltipPosition="top"></i><p-confirmPopup key="confirm2"></p-confirmPopup>
+                      <i class="pi pi-pencil" (click)="pestanaeditarproveedor(provee)" style="font-size: .8rem; margin-left: 10px; color:green" pTooltip="Editar" tooltipPosition="top"></i>
+                      <i  class="pi pi-user-plus" (click)="pestanaAgregarContacto(provee)" style="font-size: .8rem; margin-left: 10px; color:blue" pTooltip="Nuevo Contacto" tooltipPosition="top"></i>
+                    </div>
+                  </td>
+                  <!-- <td style="min-width: 10rem;" [ngStyle]="{'display': ''}">{{provee.contacto_j | json }}</td> -->
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="rowexpansion" let-product>
+                <tr>
+                  <td colspan="7">
+                    <div class="p-3">
+                      <p-table [value]="product.contacto_j" dataKey="id" responsiveLayout="scroll">
+                        <ng-template pTemplate="header">
+                <tr>
+                  <th pSortableColumn="nombre" style="background-color:#00ABED;">Nombre<p-sortIcon field="nombre"></p-sortIcon></th>
+                  <th pSortableColumn="celular" style="background-color:#00ABED;">Celular <p-sortIcon field="celular"></p-sortIcon></th>
+                  <th pSortableColumn="fijo" style="background-color:#00ABED;">Fijo <p-sortIcon field="fijo"></p-sortIcon></th>
+                  <th pSortableColumn="email" style="background-color:#00ABED;">Email <p-sortIcon field="email"></p-sortIcon></th>
+                  <th pSortableColumn="departamento" style="background-color:#00ABED;">Departamento <p-sortIcon field="departamento"></p-sortIcon></th>
+                  <th style="width: 5rem" style="background-color:#00ABED; "></th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-contacto>
+                <tr *ngIf="contacto.estado=='1'">
+                  <td>{{contacto.nombre}} <i class="pi pi-info-circle" (click)="showInfoViaToast(contacto.observacion, 'Observaciones')" style="font-size: .8rem; margin-left: .5rem;"></i></td>
+                  <td>{{contacto.celular}}</td>
+                  <td>{{contacto.fijo}}</td>
+                  <td>{{contacto.email}}</td>
+                  <td>{{contacto.departamento}} <i class="pi pi-map-marker"  (click)="showInfoViaToast(contacto.direccion, 'Direccion')" style="font-size: .8rem; margin-left: 10px;"></i></td>
+                  <td>
+                    <div class="card" style="display: flex; justify-content: center;">
+                      <i class="pi pi-minus-circle" (click)="eliminarContacto($event, product.contacto_j, contacto, product.id_proveedor)" style="font-size: .8rem; color: red;" pTooltip="Eliminar" tooltipPosition="top"></i><p-confirmPopup key="confirm2"></p-confirmPopup>
+                      <i class="pi pi-pencil" (click)="ContactoEditar(product.contacto_j, contacto, product.id_proveedor)" style="font-size: .8rem; margin-left: 10px;" pTooltip="Editar" tooltipPosition="top"></i>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="6">There are no order for this product yet.</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+          </td>
+          </tr>
+          </ng-template>
+          </p-table>
+        </div>
+
+      </p-tabPanel>
+
+      <!-- ---------------------------------------------NUEVO PROVEEDOR--------------------------------------------------------------------- -->
+      <p-tabPanel *ngIf="nuevoProveedor" header={{TituloProveedor}} class="line-height-3 m-0">
+        <br>
+        <form [formGroup]="proveedorForms">
+          <div class="grid p-fluid">
+            <div class="col-12">
+              <div class="card">
+                <div class="grid">
+
+                    <div class="col-12 md:col-12">
+                        <b [ngStyle]="{'color': proveedorForms.get('nombre')?.hasError('required') && proveedorForms.get('nombre')?.touched? 'red' : ''}">Nombre Proveedor <span style="color: red;">*</span></b>
+                        <input type="text" pInputText placeholder="" formControlName="nombre">
+                    </div>
+                    <div class="col-12 md:col-3">
+                      <b [ngStyle]="{'color': proveedorForms.get('telefono')?.hasError('required') && proveedorForms.get('telefono')?.touched? 'red' : ''}">Telefono <span style="color: red;">*</span></b>
+                      <input type="text" pInputText placeholder="" formControlName="telefono">
+                    </div>
+                    <div class="col-12 md:col-3">
+                      <b [ngStyle]="{'color': proveedorForms.get('nit')?.hasError('required') && proveedorForms.get('nit')?.touched? 'red' : ''}">Nit <span style="color: red;">*</span></b>
+                      <input type="text" pInputText placeholder="" formControlName="nit">
+                    </div>
+                    <div class="col-12 md:col-3">
+                      <b [ngStyle]="{'color': proveedorForms.get('departamento')?.hasError('required') && proveedorForms.get('departamento')?.touched? 'red' : ''}">Departamento <span style="color: red;">*</span></b>
+                      <p-dropdown [options]="departamentos" [placeholder]="'Elegir'" [showClear]="true" formControlName="departamento"  optionLabel="label" optionValue="value" [required]="true"></p-dropdown>
+
+                    </div>
+                    <div class="col-12 md:col-3">
+                      <b [ngStyle]="{'color': proveedorForms.get('email')?.hasError('required') && proveedorForms.get('email')?.touched? 'red' : ''}">Email <span style="color: red;">*</span></b>
+                      <input type="email" pInputText placeholder="" formControlName="email">
+                    </div>
+                    <div class="col-12 md:col-12">
+                      <b [ngStyle]="{'color': proveedorForms.get('direccion')?.hasError('required') && proveedorForms.get('direccion')?.touched? 'red' : ''}">Direccion <span style="color: red;">*</span></b>
+                      <input type="text" pInputText placeholder="" formControlName="direccion">
+                    </div>
+                    <div class="col-12 md:col-12">
+                      <b>Observaciones</b>
+                      <textarea rows="5" cols="30" placeholder="" pInputTextarea formControlName="observacion"></textarea>
+                    </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+        <div class="card" style="display: flex; justify-content: center;">
+          <div class="flex flex-wrap gap-2">
+            <button pButton pRipple type="button" label="Regresar Lista" class="p-button-outlined p-button-secondary" (click)="accionBotonForm('regresar','','','','','')"></button>
+            <button *ngIf="!bitacoraE" pButton pRipple type="button" label="Guardar y Regresar a la Lista" class="p-button-outlined p-button-success" (click)="accionBotonForm('guardar','Proveedor','Guardado','','','')" [disabled]="proveedorForms.invalid"></button>
+            <button *ngIf="bitacoraE" pButton pRipple type="button" label="Actualizar y Regresar a la Lista" class="p-button-outlined p-button-success" (click)="accionBotonForm('guardar','ProveedorEditar','Guardado',id_proveedor,'',bitacoraEditar)" [disabled]="proveedorForms.invalid"></button>
+            <button *ngIf="!bitacoraE" pButton pRipple type="button" label="Guardar y Agregar Contactos" class="p-button-outlined p-button-info" (click)="accionBotonForm('contacto','Proveedor','Guardado','','','')" [disabled]="proveedorForms.invalid"></button>
+            <button *ngIf="bitacoraE" pButton pRipple type="button" label="Actualizar y Agregar Contactos" class="p-button-outlined p-button-info" (click)="accionBotonForm('contacto','ProveedorEditarContacto','Guardado',id_proveedor,'',bitacoraEditar)" [disabled]="proveedorForms.invalid"></button>
+          </div>
+        </div>
+
+      </form>
+
+      </p-tabPanel>
+
+      <!-- ---------------------------------------------NUEVO CONTACTO--------------------------------------------------------------------- -->
+      <p-tabPanel *ngIf="nuevoContacto" header={{TituloContacto}} class="line-height-3 m-0">
+        <br>
+          <form [formGroup]="contactoForms">
+            <div class="grid p-fluid">
+              <div class="col-12">
+                <b>Proveedor: {{id_proveedor['razonSocial']}} </b><br>
+                <div class="card">
+                  <div class="grid">
+
+                    <div class="col-12 md:col-12">
+                        <b>Nombre Contacto</b>
+                        <input type="text" pInputText placeholder="" formControlName="nombre">
+                    </div>
+                    <div class="col-12 md:col-3">
+                      <b>Celular</b>
+                      <input type="text" pInputText placeholder="" formControlName="celular">
+                    </div>
+                    <div class="col-12 md:col-3">
+                      <b>Fijo</b>
+                      <input type="text" pInputText placeholder="" formControlName="fijo">
+                    </div>
+                    <div class="col-12 md:col-3">
+                      <b>Departamento</b>
+                      <p-dropdown [options]="departamentos" [placeholder]="'Elegir'" [showClear]="true" formControlName="departamento"  optionLabel="label" optionValue="value" [required]="true"></p-dropdown>
+                    </div>
+                    <div class="col-12 md:col-3">
+                      <b>Email</b>
+                      <input type="text" pInputText placeholder="" formControlName="email">
+                    </div>
+                    <div class="col-12 md:col-12">
+                      <b>Direccion</b>
+                      <input type="text" pInputText placeholder="" formControlName="direccion">
+                    </div>
+                    <div class="col-12 md:col-12">
+                      <b>Observaciones</b>
+                      <textarea rows="5" cols="30" placeholder="" pInputTextarea formControlName="observacion"></textarea>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="display: flex; justify-content: center;">
+              <div class="flex flex-wrap gap-2">
+                <button pButton pRipple type="button" label="Regresar Lista" class="p-button-outlined p-button-secondary" (click)="accionBotonForm('regresar','','','','','')"></button>
+                <button pButton pRipple type="button" label="Guardar y Regresar a la Lista" class="p-button-outlined p-button-success" (click)="accionBotonForm('guardar','Contacto','Guardado','','','')" [disabled]="contactoForms.invalid"></button>
+                <button pButton pRipple type="button" label="Guardar y Agregar + Contactos" class="p-button-outlined p-button-info" (click)="accionBotonForm('contacto','Contacto','Guardado','','','')" [disabled]="contactoForms.invalid"></button>
+              </div>
+            </div>
+          </form>
+
+      </p-tabPanel>
+  </p-tabView>
+
+</div>
+
+

@@ -1,0 +1,15 @@
+{
+  "data": [
+      {"label": "LA PAZ", "value":"LA PAZ"},
+      {"label": "SANTA CRUZ", "value":"SANTA CRUZ"},
+      {"label": "COCHABAMBA", "value":"COCHABAMBA"},
+      {"label": "CHUQUISACA", "value":"CHUQUISACA"},
+      {"label": "ORURO", "value":"ORURO"},
+      {"label": "POTOSI", "value":"POTOSI"},
+      {"label": "TARIJA", "value":"TARIJA"},
+      {"label": "BENI", "value":"BENI"},
+      {"label": "PANDO", "value":"PANDO"}
+  ]
+}
+
+

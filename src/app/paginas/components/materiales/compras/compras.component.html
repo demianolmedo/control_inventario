@@ -1,0 +1,436 @@
+<div class="card">
+  <h5>MATERIALES | COMPRAS</h5>
+  <p-tabView orientation="left">
+      <p-tabPanel *ngIf="lista" header={{titulo}} class="line-height-3 m-0">
+
+        <p-table #dt1 [value]="compras" dataKey="id_proveedor" [rows]="12" [loading]="loading" [rowHover]="true" styleClass="p-datatable-gridlines" [paginator]="true" [globalFilterFields]="['codigoCompra','nombre_solicita','razonSocial','item','jefatura', 'gerencia', 'departamento_solicita', 'fecha_solicita', 'nro_comprobante']" responsiveLayout="scroll">
+          <ng-template pTemplate="caption">
+            <div class="flex justify-content-between flex-column sm:flex-row">
+              <!-- <button pButton label="Limpiar" class="p-button-outlined mb-2" icon="pi pi-filter-slash" (click)="clear(dt1)"></button> -->
+              <!-- <button pButton label="Nueva Compra" class="p-button-outlined mb-2" icon="pi pi-plus" (click)="ItemNuevo('Nuevo Item','nuevo')"></button> -->
+              <button pButton label="Nueva compra" class="p-button-outlined mb-2" icon="pi pi-plus" (click)="nuevaCompraBoton()"></button>
+              <button pButton pRipple type="button" label="Pendientes" class="p-button-secondary p-button-text" routerLink="/materiales/compras/Pendientes"></button>
+                <button pButton pRipple type="button" label="Aprobados" class="p-button-success p-button-text" routerLink="/materiales/compras/Aprobados"></button>
+                <button pButton pRipple type="button" label="Rechazados" class="p-button-warning p-button-text" routerLink="/materiales/compras/Rechazados"></button>
+              <span class="p-input-icon-left mb-2">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" #filter (input)="onGlobalFilter(dt1, $event)" placeholder="Busqueda general" class="w-full"/>
+              </span>
+
+            </div>
+          </ng-template>
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="min-width: 10rem">
+                <div class="flex justify-content-between align-items-center">
+                  Codigo Compra
+                  <p-columnFilter type="text" field="codigoCompra" display="menu" matchMode="contains" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" placeholder="Buscar Codigo"></p-columnFilter>
+                </div>
+              </th>
+              <th>
+                <div class="flex justify-content-between align-items-center">
+                  Item
+                  <p-columnFilter type="text" field="item" display="menu" matchMode="contains"  [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" placeholder="Buscar Item"></p-columnFilter>
+                </div>
+              </th>
+              <th>
+                <div class="flex justify-content-between align-items-center">
+                  Proveedor
+                  <p-columnFilter type="text" field="razonSocial" display="menu" matchMode="contains"  [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" placeholder="Buscar Proveedor"></p-columnFilter>
+                </div>
+              </th>
+              <th>
+                <div class="flex justify-content-between align-items-center">
+                  Solicitante
+                  <p-columnFilter type="text" field="nombre_solicita" display="menu" matchMode="contains"  [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" placeholder="Buscar Solicitante"></p-columnFilter>
+                </div>
+              </th>
+              <th>
+                <div class="flex justify-content-between align-items-center">
+                  Regional
+                  <p-columnFilter type="text" field="departamento_solicita" display="menu" matchMode="contains"  [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" placeholder="Buscar Regional"></p-columnFilter>
+                </div>
+              </th>
+              <th pSortableColumn="fecha_solicita">
+                <div class="flex justify-content-between align-items-center">
+                  Fecha Solicitud
+                  <p-sortIcon field="fecha_solicita"></p-sortIcon>
+                </div>
+              </th>
+              <th pSortableColumn="precioTotalCompra">
+                <div class="flex justify-content-between align-items-center">
+                  Total Bs
+                  <p-sortIcon field="precioTotalCompra"></p-sortIcon>
+                </div>
+              </th>
+              <th *ngIf="titulo!='Aprobados'">
+                <div class="flex justify-content-between align-items-center">
+                  Jefatura
+                </div>
+              </th>
+              <th *ngIf="titulo!='Aprobados'">
+                <div class="flex justify-content-between align-items-center">
+                  Gerencia
+                </div>
+              </th>
+              <th *ngIf="titulo=='Aprobados'" pSortableColumn="calidadCompletado">
+                <div class="flex justify-content-between align-items-center">
+                  Calidad
+                  <p-sortIcon field="calidadCompletado"></p-sortIcon>
+                </div>
+              </th>
+              <th *ngIf="titulo=='Aprobados'" pSortableColumn="fecha_regDesembolso">
+                <div class="flex justify-content-between align-items-center">
+                  Desembolso
+                  <p-sortIcon field="fecha_regDesembolso"></p-sortIcon>
+                </div>
+              </th>
+              <th *ngIf="titulo=='Aprobados'" pSortableColumn="fecha_regDescargo">
+                <div class="flex justify-content-between align-items-center">
+                  Descargo
+                  <p-sortIcon field="fecha_regDescargo"></p-sortIcon>
+                </div>
+              </th>
+              <th *ngIf="titulo=='Aprobados'" pSortableColumn="almacenCompleto">
+                <div class="flex justify-content-between align-items-center">
+                  Almacen
+                  <p-sortIcon field="almacenCompleto"></p-sortIcon>
+                </div>
+              </th>
+              <!-- <th style="width: 5rem"></th> -->
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-customer>
+            <tr>
+              <td>
+                {{customer.codigoCompra}}
+                <i class="pi pi-eye" (click)="mostrarDetalle(customer)"style="font-size: .8rem; margin-left: 10px; color:green" pTooltip="Detalle Compra" tooltipPosition="top"></i>
+              </td>
+              <td>
+                {{customer.item}}
+              </td>
+              <td>
+                {{customer.razonSocial}}
+              </td>
+              <td>
+                {{customer.nombre_solicita}}
+              </td>
+              <td>
+                {{customer.departamento_solicita}}
+              </td>
+              <td>
+                {{customer.fecha_solicita | date:'yyyy-MM-dd HH:mm'}}
+              </td>
+              <td>
+                {{customer.precioTotalCompra | currency: 'Bs. '}}
+              </td>
+              <td *ngIf="titulo!='Aprobados'">
+                {{customer.jefatura}}
+              </td>
+              <td *ngIf="titulo!='Aprobados'">
+                {{customer.gerencia}}
+              </td>
+              <td *ngIf="titulo=='Aprobados'">
+                <b *ngIf="customer.calidadCompletado=='IN'" style="color:red">Incompleto</b>
+              </td>
+              <td *ngIf="titulo=='Aprobados'">
+                <b>{{customer.nro_comprobante}}</b> <small *ngIf="customer.nro_comprobante"> <br>{{customer.fecha_desembolso | date:'yyyy-MM-dd'}}</small>
+              </td>
+              <td *ngIf="titulo=='Aprobados'">
+                {{customer.fecha_descargo | date:'yyyy-MM-dd'}}
+              </td>
+              <td *ngIf="titulo=='Aprobados'">
+                <b *ngIf="customer.almacenCompletado=='IN'" style="color:red">Incompleto</b>
+                <b *ngIf="customer.almacenCompletado=='SI'">Completado</b>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="9">No se encontro registros.</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="loadingbody">
+            <tr>
+              <td colspan="9">Cargando data. Por favor esperar...</td>
+            </tr>
+          </ng-template>
+          </p-table>
+
+          <p-dialog header="Detalle Compra: {{CompraCodigo}}" [(visible)]="display" [modal]="true" showEffect="fade" [style]="{width: '60vw'}"  [breakpoints]="{'960px': '75vw'}">
+
+
+            <div class="grid p-fluid">
+              <div class="col-12 md:col-6">
+                <div class="card">
+                  <b>Item: </b> {{CompraItem}}<br>
+                  <b>Marca: </b> {{CompraMarca}}<br>
+                  <b>Proveedor: </b> {{CompraProveedor}}<br>
+                  <b>Regional: </b> {{CompraRegional}}<br>
+                  <b>Cantidad: </b> {{CompraCantidad | number}} {{CompraUnidadmedida}}<br>
+                  <b>Presentacion: </b> {{CompraUnidadmedida}} de {{CompraPresentacionItem}} {{CompraMedida}}<br>
+                  <b>Cantidad Total </b> {{CompraCantidadTotal | number}} {{CompraMedida}}<br>
+                  <b>Total Bs.: </b> {{CompraPrecioTotal | number:'1.2-2'}}<br>
+                  <b>Solicitante: </b> {{CompraSolicitante}} <small>{{CompraFechaSolicita | date:'yyyy-MM-dd'}}</small><br>
+                  <b>Jefatura: </b> {{CompraJefatura}} <small *ngIf="CompraFechaJefatura">{{CompraFechaJefatura | date:'yyyy-MM-dd'}}</small><br>
+                  <b>Gerencia: </b> {{CompraGerencia}} <small *ngIf="CompraFechaGerencia">{{CompraFechaGerencia | date:'yyyy-MM-dd'}}</small><br>
+                  <b>Fecha Desembolso: </b> {{CompraFechaDesembolso | date:'yyyy-MM-dd'}}<br>
+                  <b>N° Comprobante: </b> {{CompraNComprobante}}<br>
+                  <b>Fecha Descargo: </b> {{CompraFechaDescargo | date:'yyyy-MM-dd'}}<br>
+                  <b>Observaciones: </b> {{CompraObservaciones}}<br>
+                </div>
+              </div>
+              <div class="col-12 md:col-6">
+                <div class="card">
+                  <p-table [value]="CompraDepartamento_j">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Ciudad</th>
+                            <th>Cantidad</th>
+                            <th>Calidad</th>
+                            <th>Almacen</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-product>
+                        <tr>
+                            <td>{{ product.ciudad }}</td>
+                            <td>{{ product.valor }}</td>
+                            <td>{{ product.fechaProgCalidad }}</td>
+                            <td>{{ product.fechaAlmacen }}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                </div>
+              </div>
+            </div>
+
+
+          <ng-template pTemplate="footer">
+                  <button pButton icon="pi pi-check" (click)="display=false" label="Ok" class="p-button-outlined"></button>
+          </ng-template>
+
+      </p-dialog>
+
+<!-- -------------------------------------------------------------- NUEVA COMPRA ------------------------------------------------------------------- -->
+      </p-tabPanel>
+
+      <p-tabPanel *ngIf="nuevoCompra" header="Nueva Compra" class="line-height-3 m-0">
+        <br>
+        <form [formGroup]="compraForms">
+
+          <div class="grid p-fluid">
+
+            <div class="col-12 md:col-8">
+              <div class="card">
+                <b>DATOS DE LA COMPRA FTTH</b><br><hr><p>
+                  <div class="grid formgrid">
+                    <div class="col-12 mb-2 lg:col-12 lg:mb-0">
+                      Proveedor<span style="color: red;">*</span>
+                      <p-dropdown [options]="proveedor" [placeholder]="'Elegir'" [showClear]="true" optionLabel="razonSocial" optionValue="id_proveedor" [required]="true" (onChange)="onSelectProveedor()" formControlName="id_proveedor"></p-dropdown>
+                    </div>
+                    <div class="col-12 mb-2 lg:col-12 lg:mb-0">
+                      <br>Item<span style="color: red;">* </span> <b *ngIf="clasificacion" style="color: #6B0000; font-size: .8em;"> {{clasificacion}}</b>
+                      <p-dropdown [options]="itemsFiltro" [placeholder]="'Elegir'" [showClear]="true" optionLabel="item" optionValue="id_item" [required]="true" (onChange)="onSelectItem()" formControlName="id_item"></p-dropdown>
+                    </div>
+                    <div class="col-12 mb-2 lg:col-6 lg:mb-0">
+                      <br>Cantidad a Comprar<span style="color: red;">* </span> <b style="color: #6B0000; font-size: .8em;">{{medidaInventario}}</b>
+                      <input type="number" pInputText placeholder="" (change)="calcularPrecioTotal()" min="1" step="1" formControlName="cantidadCompra">
+                    </div>
+                    <div class="col-12 mb-2 lg:col-3 lg:mb-0">
+                      <br>Precio Unitario (Bs)<span style="color: red;">* </span>
+                      <input type="number" pInputText placeholder="" (change)="calcularPrecioTotal()" min="0" formControlName="precioUnitarioCompra">
+                    </div>
+                    <div class="col-12 mb-2 lg:col-3 lg:mb-0">
+                      <br>Precio Total (Bs.)<span style="color: red;">* </span>
+                      <input type="number" pInputText placeholder="" (change)="calcularPrecioUnitario()" min="0" formControlName="precioTotalCompra">
+                    </div>
+                  </div>
+              </div>
+
+              <div class="card">
+                <b>DATOS DEL ITEM A COMPRAR</b><br><hr><p>
+
+                  <div class="grid formgrid">
+                    <div class="col-12 mb-2 lg:col-4 lg:mb-0">
+                      Presentacion<span style="color: red;">*</span>
+                      <p-dropdown [(ngModel)]="presentacionValue" [options]="presentacion" [placeholder]="'Elegir'" [showClear]="true" [required]="true" (onChange)="onSelectPresentacion()" formControlName="presentacionItem"></p-dropdown>
+
+                    </div>
+                    <div class="col-12 mb-2 lg:col-4 lg:mb-0" style="margin-top: 1.8rem;">
+                      <label>Unidad de medida: <b style="color: #6B0000; font-size: .8em;">{{medidaCompra}}</b></label>
+
+                    </div>
+                    <div class="col-12 mb-2 lg:col-4 lg:mb-0" style="margin-top: 1.8rem;">
+                      <label>Medida Total: <b style="color: #6B0000;">{{cantidadTotal}}</b></label>
+
+                    </div>
+                  </div>
+              </div>
+
+            </div>
+
+            <div class="col-12 md:col-4">
+
+
+
+              <div class="card">
+                <b>ASIGNACION POR REGIONAL<span style="color: red;">* </span></b>
+                  <b *ngIf="restaReginalValue>0" style="color: green; font-size: .8rem;">FALTAN: {{restaReginalValue}}</b>
+                  <b *ngIf="restaReginalValue<0" style="color: red; font-size: .8rem;" >EXCEDE: {{restaReginalValue}}</b>
+                  <b *ngIf="restaReginalValue==0 && compraForms.get('cantidadCompra')?.value>0" style="color: blue; font-size: .8rem;" >COMPLETO!</b>
+                <br><hr>
+
+
+                <div class="grid formgrid">
+                  <div class="col-6">
+                    <div class="field-checkbox">
+                      <input type="checkbox"  [(ngModel)]="lpcheckboxMarcado" [ngModelOptions]="{standalone: true}" id="LP" (change)="cantidadRegion($event, 'LP')">
+                      <label for="LP"><small>LA PAZ</small></label>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                      <input type="number" pInputText placeholder="Cantidad" [disabled]="!lpcheckboxMarcado" min="1" step="1" (change)="cantidadRegion($event, 'LP')" [(ngModel)]="lpValue" [ngModelOptions]="{standalone: true}" >
+                  </div>
+                </div>
+
+                <div class="grid formgrid">
+                  <div class="col-6">
+                    <div class="field-checkbox">
+                      <input type="checkbox" [(ngModel)]="sccheckboxMarcado" [ngModelOptions]="{standalone: true}" id="SC" (change)="cantidadRegion($event, 'SC')">
+                      <label for="SC"><small>SANTA CRUZ</small></label>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                      <input type="number" pInputText placeholder="Cantidad" [disabled]="!sccheckboxMarcado" min="1" step="1" (change)="cantidadRegion($event, 'SC')" [(ngModel)]="scValue" [ngModelOptions]="{standalone: true}" >
+                  </div>
+                </div>
+
+                <div class="grid formgrid">
+                  <div class="col-6">
+                    <div class="field-checkbox">
+                      <input type="checkbox" [(ngModel)]="cbcheckboxMarcado" [ngModelOptions]="{standalone: true}" id="CB" (change)="cantidadRegion($event, 'CB')">
+                      <label for="CB"><small>COCHABAMBA</small></label>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                      <input type="number" pInputText placeholder="Cantidad" [disabled]="!cbcheckboxMarcado" min="1" step="1" (change)="cantidadRegion($event, 'CB')" [(ngModel)]="cbValue" [ngModelOptions]="{standalone: true}" >
+                  </div>
+                </div>
+
+                <div class="grid formgrid">
+                  <div class="col-6">
+                    <div class="field-checkbox">
+                      <input type="checkbox" [(ngModel)]="chcheckboxMarcado" [ngModelOptions]="{standalone: true}" id="CH" (change)="cantidadRegion($event, 'CH')">
+                      <label for="CH"><small>CHUQUISACA</small></label>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                      <input type="number" pInputText placeholder="Cantidad" [disabled]="!chcheckboxMarcado" min="1" step="1" (change)="cantidadRegion($event, 'CH')" [(ngModel)]="chValue" [ngModelOptions]="{standalone: true}" >
+                  </div>
+                </div>
+
+                <div class="grid formgrid">
+                  <div class="col-6">
+                    <div class="field-checkbox">
+                      <input type="checkbox" [(ngModel)]="orcheckboxMarcado" [ngModelOptions]="{standalone: true}" id="OR" (change)="cantidadRegion($event, 'OR')">
+                      <label for="OR"><small>ORURO</small></label>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                      <input type="number" pInputText placeholder="Cantidad" [disabled]="!orcheckboxMarcado" min="1" step="1" (change)="cantidadRegion($event, 'OR')" [(ngModel)]="orValue" [ngModelOptions]="{standalone: true}" >
+                  </div>
+                </div>
+
+                <div class="grid formgrid">
+                  <div class="col-6">
+                    <div class="field-checkbox">
+                      <input type="checkbox" [(ngModel)]="pocheckboxMarcado" [ngModelOptions]="{standalone: true}" id="PO" (change)="cantidadRegion($event, 'PO')">
+                      <label for="PO"><small>POTOSI</small></label>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                      <input type="number" pInputText placeholder="Cantidad" [disabled]="!pocheckboxMarcado" min="1" step="1" (change)="cantidadRegion($event, 'PO')" [(ngModel)]="poValue" [ngModelOptions]="{standalone: true}" >
+                  </div>
+                </div>
+
+                <div class="grid formgrid">
+                  <div class="col-6">
+                    <div class="field-checkbox">
+                      <input type="checkbox" [(ngModel)]="tacheckboxMarcado" [ngModelOptions]="{standalone: true}" id="TA" (change)="cantidadRegion($event, 'TA')">
+                      <label for="TA"><small>TARIJA</small></label>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                      <input type="number" pInputText placeholder="Cantidad" [disabled]="!tacheckboxMarcado" min="1" step="1" (change)="cantidadRegion($event, 'TA')" [(ngModel)]="taValue" [ngModelOptions]="{standalone: true}" >
+                  </div>
+                </div>
+
+                <div class="grid formgrid">
+                  <div class="col-6">
+                    <div class="field-checkbox">
+                      <input type="checkbox" [(ngModel)]="becheckboxMarcado" [ngModelOptions]="{standalone: true}" id="BE" (change)="cantidadRegion($event, 'BE')">
+                      <label for="BE"><small>BENI</small></label>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                      <input type="number" pInputText placeholder="Cantidad" [disabled]="!becheckboxMarcado" min="1" step="1" (change)="cantidadRegion($event, 'BE')" [(ngModel)]="beValue" [ngModelOptions]="{standalone: true}" >
+                  </div>
+                </div>
+
+                <div class="grid formgrid">
+                  <div class="col-6">
+                    <div class="field-checkbox">
+                      <input type="checkbox" [(ngModel)]="pacheckboxMarcado" [ngModelOptions]="{standalone: true}" id="PA" (change)="cantidadRegion($event, 'PA')">
+                      <label for="PA"><small>PANDO</small></label>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                      <input type="number" pInputText placeholder="Cantidad" [disabled]="!pacheckboxMarcado" min="1" step="1" (change)="cantidadRegion($event, 'PA')" [(ngModel)]="paValue" [ngModelOptions]="{standalone: true}" >
+                  </div>
+                </div>
+
+
+
+              </div>
+            </div>
+
+            <div class="col-12 md:col-12">
+
+              <div class="card">
+                <b>Observaciones</b><br><hr>
+                <textarea rows="5" cols="30" placeholder="" pInputTextarea  formControlName="observacion"></textarea>
+
+              </div>
+
+            </div>
+          </div>
+
+          <div class="card" style="display: flex; justify-content: center;">
+            <div class="flex flex-wrap gap-2">
+              <button pButton pRipple type="button" label="Regresar" class="p-button-outlined p-button-secondary" (click)="regresar()"></button>
+              <button pButton pRipple type="button" label="Guardar Compra" class="p-button-outlined p-button-success"   [disabled]="botonNuevo" (click)="guardar()"></button>
+            </div>
+          </div>
+
+
+        </form>
+      </p-tabPanel>
+
+  </p-tabView>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+

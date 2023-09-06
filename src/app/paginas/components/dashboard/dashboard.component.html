@@ -1,0 +1,630 @@
+<div class="card">
+  <h5>DASHBOARD</h5>
+</div>
+    <div class="grid">
+        <div class="col-12 lg:col-6 xl:col-3">
+            <div class="card mb-0">
+                <div class="flex justify-content-between mb-3">
+                    <div>
+                        <span class="block text-black-500 font-medium mb-3" routerLink="/materiales/compras/Pendientes">PENDIENTES</span>
+                        <div class="text-900 font-medium text-xl">{{comprasPend.length}}
+                          <span class="text-500" style="font-size: 12px;">{{comprasPendJefa}} Jefatura</span>
+                          <span class="text-500 font-medium" style="font-size: 12px;"> / </span>
+                          <span class="text-500" style="font-size: 12px;">{{comprasPendGere - comprasPendJefa}} Gerencia</span>
+                        </div>
+                    </div>
+                    <div class="flex align-items-center justify-content-center bg-gray-200 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                        <i class="pi pi-info-circle text-black-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 lg:col-6 xl:col-3">
+            <div class="card mb-0">
+                <div class="flex justify-content-between mb-3">
+                    <div>
+                        <span class="block text-green-500 font-medium mb-3"routerLink="/materiales/compras/Aprobados">APROBADOS</span>
+                        <div class="text-900 font-medium text-xl">{{comprasApro.length}}
+                        </div>
+                    </div>
+                    <div class="flex align-items-center justify-content-center bg-green-100 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                        <i class="pi pi-thumbs-up text-green-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 lg:col-6 xl:col-3">
+            <div class="card mb-0">
+                <div class="flex justify-content-between mb-3">
+                    <div>
+                        <span class="block text-orange-500 font-medium mb-3"routerLink="/materiales/compras/Rechazados">RECHAZADOS</span>
+                        <div class="text-900 font-medium text-xl">{{comprasRech.length}}
+                          <span class="text-500" style="font-size: 12px;">{{comprasRechJefa}} Jefatura</span>
+                          <span class="text-500 font-medium" style="font-size: 12px;"> / </span>
+                          <span class="text-500" style="font-size: 12px;">{{comprasRechGere}} Gerencia</span>
+                        </div>
+                    </div>
+                    <div class="flex align-items-center justify-content-center bg-orange-100 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                        <i class="pi pi-thumbs-down text-orange-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 lg:col-6 xl:col-3">
+            <div class="card mb-0">
+                <div class="flex justify-content-between mb-3">
+                    <div>
+                        <span class="block text-blue-500 font-medium mb-3">TOTAL</span>
+                        <div class="text-900 font-medium text-xl">{{comprasPend.length+comprasApro.length+comprasRech.length}}</div>
+                    </div>
+                    <div class="flex align-items-center justify-content-center bg-blue-100 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                        <i class="pi pi-cloud text-blue-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 xl:col-12">
+            <div class="card">
+                <h5>PENDIENTES</h5>
+                <p-table #dt1 [value]="comprasPendTabla" dataKey="id_proveedor" [rows]="10" [loading]="loading" [rowHover]="true" styleClass="p-datatable-gridlines" [paginator]="true" [globalFilterFields]="['codigoCompra','nombre_solicita','razonSocial','item','jefatura', 'gerencia', 'departamento_solicita', 'fecha_solicita']" responsiveLayout="scroll">
+                  <ng-template pTemplate="caption">
+                    <div class="flex justify-content-between flex-column sm:flex-row">
+                      <span class="p-input-icon-left mb-2">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" #filter (input)="onGlobalFilter(dt1, $event)" placeholder="Busqueda general" class="w-full"/>
+                      </span>
+
+                    </div>
+                  </ng-template>
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th style="min-width: 10rem">
+                        <div class="flex justify-content-between align-items-center">
+                          Codigo
+                          <p-columnFilter type="text" field="codigoCompra" display="menu" matchMode="contains" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" placeholder="Buscar Codigo"></p-columnFilter>
+                        </div>
+                      </th>
+                      <th >
+                        <div class="flex justify-content-between align-items-center">
+                          Item
+                          <p-columnFilter type="text" field="item" display="menu" matchMode="contains"  [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" placeholder="Buscar Item"></p-columnFilter>
+                        </div>
+                      </th>
+                      <th >
+                        <div class="flex justify-content-between align-items-center">
+                          Proveedor
+                          <p-columnFilter type="text" field="razonSocial" display="menu" matchMode="contains"  [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" placeholder="Buscar Proveedor"></p-columnFilter>
+                        </div>
+                      </th>
+                      <th >
+                        <div class="flex justify-content-between align-items-center">
+                          Solicitante
+                          <p-columnFilter type="text" field="nombre_solicita" display="menu" matchMode="contains"  [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" placeholder="Buscar Solicitante"></p-columnFilter>
+                        </div>
+                      </th>
+                      <th >
+                        <div class="flex justify-content-between align-items-center">
+                          Regional
+                          <p-columnFilter type="text" field="departamento_solicita" display="menu" matchMode="contains"  [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" placeholder="Buscar Regional"></p-columnFilter>
+                        </div>
+                      </th>
+                      <th  pSortableColumn="fecha_solicita">
+                        <div class="flex justify-content-between align-items-center">
+                          Solicitud
+                          <p-sortIcon field="fecha_solicita"></p-sortIcon>
+                        </div>
+                      </th>
+                      <th  pSortableColumn="precioTotalCompra">
+                        <div class="flex justify-content-between align-items-center">
+                          Total
+                          <p-sortIcon field="precioTotalCompra"></p-sortIcon>
+                        </div>
+                      </th>
+                      <th >
+                        <div class="flex justify-content-between align-items-center">
+                          Jefatura
+                        </div>
+                      </th>
+                      <th >
+                        <div class="flex justify-content-between align-items-center">
+                          Gerencia
+                        </div>
+                      </th>
+                      <th style="width: 5rem"></th>
+                      <!-- <th style="width: 5rem"></th> -->
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-customer>
+                    <tr>
+                      <td>
+                        {{customer.codigoCompra}}
+                        <i class="pi pi-eye" (click)="mostrarDetalle(customer)"style="font-size: .8rem; margin-left: 10px; color:green" pTooltip="Detalle Compra" tooltipPosition="top"></i>
+                      </td>
+                      <td>
+                        {{customer.item}}
+                      </td>
+                      <td>
+                        {{customer.razonSocial}}
+                      </td>
+                      <td>
+                        {{customer.nombre_solicita}}
+                      </td>
+                      <td>
+                        {{customer.departamento_solicita}}
+                      </td>
+                      <td>
+                        {{customer.fecha_solicita | date:'yyyy-MM-dd HH:mm'}}
+                      </td>
+                      <td>
+                        {{customer.precioTotalCompra | currency: 'Bs. '}}
+                      </td>
+                      <td>
+                        {{customer.jefatura}}
+                      </td>
+                      <td>
+                        {{customer.gerencia}}
+                      </td>
+                      <td>
+                        <div class="card" style="display: flex; justify-content: center;">
+                          <i class="pi pi-thumbs-up" (click)="mostrarDetalleAprobar(customer)" style="font-size: .8rem; color: green;" pTooltip="Aprobar" tooltipPosition="top"></i>
+                          <i class="pi pi-thumbs-down" (click)="mostrarDetalleRechazar(customer)" style="font-size: .8rem; margin-left: 10px; color: orange;" pTooltip="Rechazar" tooltipPosition="top"></i>
+                          <i class="pi pi-minus-circle" (click)="mostrarDetalleEliminar(customer)" style="font-size: .8rem; color: red; margin-left: 10px;" pTooltip="Eliminar" tooltipPosition="top"></i>
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="emptymessage">
+                    <tr>
+                      <td colspan="9">No se encontro registros.</td>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="loadingbody">
+                    <tr>
+                      <td colspan="9">Cargando data. Por favor esperar...</td>
+                    </tr>
+                  </ng-template>
+                  </p-table>
+
+                  <p-dialog header="Detalle Compra: {{CompraCodigo}}" [(visible)]="display" [modal]="true" showEffect="fade" [style]="{width: '50vw'}"  [breakpoints]="{'960px': '75vw'}">
+
+                    <div class="grid p-fluid">
+                      <div class="col-12 md:col-8">
+                        <div class="card">
+                          <b>Item: </b> {{CompraItem}}<br>
+                          <b>Marca: </b> {{CompraMarca}}<br>
+                          <b>Proveedor: </b> {{CompraProveedor}}<br>
+                          <b>Regional: </b> {{CompraRegional}}<br>
+                          <b>Cantidad: </b> {{CompraCantidad}}<br>
+                          <b>Medida: </b> {{CompraMedida}}<br>
+                          <b>Total: </b> {{CompraPrecioTotal}}<br>
+                          <b>Solicitante: </b> {{CompraSolicitante}}<br>
+                          <b>Jefatura: </b> {{CompraJefatura}}<br>
+                          <b>Gerencia: </b> {{CompraGerencia}}<br>
+                        </div>
+                      </div>
+                      <div class="col-12 md:col-4">
+                        <div class="card">
+                          <p-table [value]="CompraDepartamento_j">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Ciudad</th>
+                                    <th>Cantidad</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-product>
+                                <tr>
+                                    <td>{{ product.ciudad }}</td>
+                                    <td>{{ product.valor }}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                        </div>
+                      </div>
+                    </div>
+
+
+                  <ng-template pTemplate="footer">
+                          <button pButton icon="pi pi-check" (click)="display=false" label="Ok" class="p-button-outlined"></button>
+                  </ng-template>
+
+              </p-dialog>
+
+              <p-dialog header="Aprobar Compra: {{CompraCodigo}}" [(visible)]="displayAprobar" [modal]="true" showEffect="fade" [style]="{width: '50vw'}"  [breakpoints]="{'960px': '75vw'}">
+                <div class="grid p-fluid">
+                  <div class="col-12 md:col-12">
+                    <div class="card">
+                      <form [formGroup]="statusForms">
+                        <b>Observaciones</b><br><hr>
+                        <textarea rows="5" cols="30" placeholder="" pInputTextarea  formControlName="observacion"></textarea>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <ng-template pTemplate="footer">
+                      <button pButton pRipple type="button" label="Cancelar" class="p-button-outlined p-button-secondary" (click)="cancelar()"></button>
+                      <button pButton pRipple type="button" label="Aprobar" class="p-button-outlined p-button-success" (click)="aprobar()"></button>
+                </ng-template>
+              </p-dialog>
+
+              <p-dialog header="Rechazar Compra: {{CompraCodigo}}" [(visible)]="displayRechazar" [modal]="true" showEffect="fade" [style]="{width: '50vw'}" [breakpoints]="{'960px': '75vw'}">
+                <div class="grid p-fluid">
+                  <div class="col-12 md:col-12">
+                    <div class="card">
+                      <form [formGroup]="statusForms">
+                        <b>Observaciones</b><br><hr>
+                        <textarea rows="5" cols="30" placeholder="" pInputTextarea  formControlName="observacion"></textarea>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <ng-template pTemplate="footer">
+                        <button pButton pRipple type="button" label="Cancelar" class="p-button-outlined p-button-secondary" (click)="cancelar()"></button>
+                        <button pButton pRipple type="button" label="Rechazar" class="p-button-outlined p-button-warning" [disabled]="statusForms.invalid" (click)="rechazar()"></button>
+                </ng-template>
+              </p-dialog>
+
+              <p-dialog header="Eliminar Compra: {{CompraCodigo}}" [(visible)]="displayEliminar" [modal]="true" showEffect="fade" [style]="{width: '50vw'}"  [breakpoints]="{'960px': '75vw'}">
+                <div class="grid p-fluid">
+                  <div class="col-12 md:col-12">
+                    <div class="card">
+                      <form [formGroup]="statusForms">
+                        <b>Observaciones</b><br><hr>
+                        <textarea rows="5" cols="30" placeholder="" pInputTextarea  formControlName="observacion"></textarea>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <ng-template pTemplate="footer">
+                      <button pButton pRipple type="button" label="Cancelar" class="p-button-outlined p-button-secondary" (click)="cancelar()"></button>
+                      <button pButton pRipple type="button" label="Eliminar" class="p-button-outlined p-button-danger" [disabled]="statusForms.invalid" (click)="eliminar()"></button>
+                </ng-template>
+              </p-dialog>
+
+            </div>
+
+        </div>
+
+        <div class="col-12 xl:col-12">
+          <div class="card">
+              <h5 style="color: green;">APROBADOS</h5>
+              <p-table #dt2 [value]="comprasAproTabla" dataKey="id_proveedor" [rows]="12" [loading]="loadingApro" [rowHover]="true" styleClass="p-datatable-gridlines" [paginator]="true" [globalFilterFields]="['codigoCompra','nombre_solicita','razonSocial','item','jefatura', 'gerencia', 'departamento_solicita', 'fecha_solicita', 'nro_comprobante']" responsiveLayout="scroll">
+                <ng-template pTemplate="caption">
+                  <div class="flex justify-content-between flex-column sm:flex-row">
+                    <span class="p-input-icon-left mb-2">
+                      <i class="pi pi-search"></i>
+                      <input pInputText type="text" #filter (input)="onGlobalFilter(dt2, $event)" placeholder="Busqueda general" class="w-full"/>
+                    </span>
+
+                  </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th style="min-width: 10rem">
+                      <div class="flex justify-content-between align-items-center">
+                        Codigo
+                        <p-columnFilter type="text" field="codigoCompra" display="menu" matchMode="contains" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" placeholder="Buscar Codigo"></p-columnFilter>
+                      </div>
+                    </th>
+                    <th >
+                      <div class="flex justify-content-between align-items-center">
+                        Item
+                        <p-columnFilter type="text" field="item" display="menu" matchMode="contains"  [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" placeholder="Buscar Item"></p-columnFilter>
+                      </div>
+                    </th>
+                    <th >
+                      <div class="flex justify-content-between align-items-center">
+                        Proveedor
+                        <p-columnFilter type="text" field="razonSocial" display="menu" matchMode="contains"  [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" placeholder="Buscar Proveedor"></p-columnFilter>
+                      </div>
+                    </th>
+                    <th >
+                      <div class="flex justify-content-between align-items-center">
+                        Solicitante
+                        <p-columnFilter type="text" field="nombre_solicita" display="menu" matchMode="contains"  [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" placeholder="Buscar Solicitante"></p-columnFilter>
+                      </div>
+                    </th>
+                    <th >
+                      <div class="flex justify-content-between align-items-center">
+                        Regional
+                        <p-columnFilter type="text" field="departamento_solicita" display="menu" matchMode="contains"  [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" placeholder="Buscar Regional"></p-columnFilter>
+                      </div>
+                    </th>
+                    <th  pSortableColumn="fecha_solicita">
+                      <div class="flex justify-content-between align-items-center">
+                        Solicitud
+                        <p-sortIcon field="fecha_solicita"></p-sortIcon>
+                      </div>
+                    </th>
+                    <th  pSortableColumn="precioTotalCompra">
+                      <div class="flex justify-content-between align-items-center">
+                        Total
+                        <p-sortIcon field="precioTotalCompra"></p-sortIcon>
+                      </div>
+                    </th>
+                    <th  pSortableColumn="calidadCompletado">
+                      <div class="flex justify-content-between align-items-center">
+                        Calidad
+                        <p-sortIcon field="calidadCompletado"></p-sortIcon>
+                      </div>
+                    </th>
+                    <th  pSortableColumn="fecha_regDesembolso">
+                      <div class="flex justify-content-between align-items-center">
+                        Desembolso
+                        <p-sortIcon field="fecha_regDesembolso"></p-sortIcon>
+                      </div>
+                    </th>
+                    <th  pSortableColumn="fecha_regDescargo">
+                      <div class="flex justify-content-between align-items-center">
+                        Descargo
+                        <p-sortIcon field="fecha_regDescargo"></p-sortIcon>
+                      </div>
+                    </th>
+                    <th  pSortableColumn="almacenCompleto">
+                      <div class="flex justify-content-between align-items-center">
+                        Almacen
+                        <p-sortIcon field="almacenCompleto"></p-sortIcon>
+                      </div>
+                    </th>
+                    <th style="width: 5rem"></th>
+                    <!-- <th style="width: 5rem"></th> -->
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-customerApro>
+                  <tr>
+                    <td>
+                      {{customerApro.codigoCompra}}
+                      <i class="pi pi-eye" (click)="mostrarDetalle(customerApro)"style="font-size: .8rem; margin-left: 10px; color:green" pTooltip="Detalle Compra" tooltipPosition="top"></i>
+                    </td>
+                    <td>
+                      {{customerApro.item}}
+                    </td>
+                    <td>
+                      {{customerApro.razonSocial}}
+                    </td>
+                    <td>
+                      {{customerApro.nombre_solicita}}
+                    </td>
+                    <td>
+                      {{customerApro.departamento_solicita}}
+                    </td>
+                    <td>
+                      {{customerApro.fecha_solicita | date:'yyyy-MM-dd HH:mm'}}
+                    </td>
+                    <td>
+                      {{customerApro.precioTotalCompra | currency: 'Bs. '}}
+                    </td>
+                    <td>
+                      <div class="card" style="display: flex; justify-content: center;">
+                        <i *ngIf="!customerApro.calidadCompletado" class="pi pi-thumbs-up" (click)="mostrarCalidad(customerApro)"  style="font-size: .8rem; color: blue;" pTooltip="Control Calidad" tooltipPosition="top"></i>
+                        <i *ngIf="customerApro.calidadCompletado=='IN'" class="pi pi-thumbs-up" (click)="mostrarDetalleAprobar(customerApro)"  style="font-size: .8rem; color: red;" pTooltip="Control Calidad Inconpleto" tooltipPosition="top"></i>
+                        <i class="pi pi-check-square" (click)="mostrarDetalleAprobar(customerApro)" style="font-size: .8rem; margin-left: 10px; color: blue;" pTooltip="Imprimir Formulario Calidad" tooltipPosition="top"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="card" style="display: flex; justify-content: center;">
+                        <i class="pi pi-wallet" (click)="mostrarDesembolso(customerApro)" style="font-size: .8rem; color: green;" pTooltip="Desembolso" tooltipPosition="top"></i>
+                        <i class="pi pi-print" (click)="mostrarDetalleAprobar(customerApro)" style="font-size: .8rem; margin-left: 10px; color: rgb(3, 71, 3);" pTooltip="Imprimir Formulario Desembolso" tooltipPosition="top"></i>
+                        <i *ngIf="customerApro.nro_comprobante" class="pi pi-search-plus" style="font-size: .8rem; margin-left: 10px; color: green;" pTooltip="{{customerApro.nro_comprobante}} / {{customerApro.fecha_desembolso | date:'yyyy-MM-dd'}}" tooltipPosition="top"></i>
+                        <!-- <br><small *ngIf="customerApro.nro_comprobante"><b>{{customerApro.nro_comprobante}}</b> / {{customerApro.fecha_desembolso | date:'yyyy-MM-dd'}}</small> -->
+                      </div>
+                    </td>
+                    <td>
+                      <div class="card" style="display: flex; justify-content: center;">
+                        <i class="pi pi-download" (click)="mostrarDescargo(customerApro)" style="font-size: .8rem; color: rgb(145, 94, 0);" pTooltip="Descargo" tooltipPosition="top"></i>
+                        <i *ngIf="customerApro.fecha_descargo" class="pi pi-search-plus" style="font-size: .8rem; margin-left: 10px; color: rgb(145, 94, 0);" pTooltip="{{customerApro.fecha_descargo | date:'yyyy-MM-dd'}}" tooltipPosition="top"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="card" style="display: flex; justify-content: center;">
+                        <i *ngIf="customerApro.calidadCompletado=='SI'"  class="pi pi-sign-in" (click)="mostrarDetalleEliminar(customerApro)" style="font-size: .8rem; color: rgb(26, 66, 26);" pTooltip="Ingresar Almacen" tooltipPosition="top"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="card" style="display: flex; justify-content: center;">
+                        <i *ngIf="!customerApro.calidadCompletado" class="pi pi-minus-circle" (click)="mostrarDetalleEliminar(customerApro)" style="font-size: .8rem; color: red;" pTooltip="Eliminar" tooltipPosition="top"></i>
+                      </div>
+                    </td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                  <tr>
+                    <td colspan="9">No se encontro registros.</td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="loadingbody">
+                  <tr>
+                    <td colspan="9">Cargando data. Por favor esperar...</td>
+                  </tr>
+                </ng-template>
+                </p-table>
+
+                <p-dialog header="Detalle Compra: {{CompraCodigo}}" [(visible)]="display" [modal]="true" showEffect="fade" [style]="{width: '60vw'}"  [breakpoints]="{'960px': '75vw'}">
+
+                  <div class="grid p-fluid">
+                    <div class="col-12 md:col-6">
+                      <div class="card">
+                        <b>Item: </b> {{CompraItem}}<br>
+                        <b>Marca: </b> {{CompraMarca}}<br>
+                        <b>Proveedor: </b> {{CompraProveedor}}<br>
+                        <b>Regional: </b> {{CompraRegional}}<br>
+                        <b>Cantidad: </b> {{CompraCantidad | number}} {{CompraUnidadmedida}}<br>
+                        <b>Presentacion: </b> {{CompraUnidadmedida}} de {{CompraPresentacionItem}} {{CompraMedida}}<br>
+                        <b>Cantidad Total </b> {{CompraCantidadTotal | number}} {{CompraMedida}}<br>
+                        <b>Total Bs.: </b> {{CompraPrecioTotal | number:'1.2-2'}}<br>
+                        <b>Solicitante: </b> {{CompraSolicitante}} <small>{{CompraFechaSolicita | date:'yyyy-MM-dd'}}</small><br>
+                        <b>Jefatura: </b> {{CompraJefatura}} <small *ngIf="CompraFechaJefatura">{{CompraFechaJefatura | date:'yyyy-MM-dd'}}</small><br>
+                        <b>Gerencia: </b> {{CompraGerencia}} <small *ngIf="CompraFechaGerencia">{{CompraFechaGerencia | date:'yyyy-MM-dd'}}</small><br>
+                        <b>Fecha Desembolso: </b> {{CompraFechaDesembolso | date:'yyyy-MM-dd'}}<br>
+                        <b>N° Comprobante: </b> {{CompraNComprobante}}<br>
+                        <b>Fecha Descargo: </b> {{CompraFechaDescargo | date:'yyyy-MM-dd'}}<br>
+                        <b>Observaciones: </b> {{CompraObservaciones}}<br>
+                      </div>
+                    </div>
+                    <div class="col-12 md:col-6">
+                      <div class="card">
+                        <p-table [value]="CompraDepartamento_j">
+                          <ng-template pTemplate="header">
+                              <tr>
+                                  <th>Ciudad</th>
+                                  <th>Cantidad</th>
+                                  <th>Calidad</th>
+                                  <th>Almacen</th>
+                              </tr>
+                          </ng-template>
+                          <ng-template pTemplate="body" let-product>
+                              <tr>
+                                  <td>{{ product.ciudad }}</td>
+                                  <td>{{ product.valor }}</td>
+                                  <td>{{ product.fechaProgCalidad }}</td>
+                                  <td>{{ product.fechaAlmacen }}</td>
+                              </tr>
+                          </ng-template>
+                      </p-table>
+                      </div>
+                    </div>
+                  </div>
+
+
+                <ng-template pTemplate="footer">
+                        <button pButton icon="pi pi-check" (click)="display=false" label="Ok" class="p-button-outlined"></button>
+                </ng-template>
+
+            </p-dialog>
+
+            <p-dialog header="Aprobar Compra: {{CompraCodigo}}" [(visible)]="displayAprobar" [modal]="true" showEffect="fade" [style]="{width: '50vw'}"  [breakpoints]="{'960px': '75vw'}">
+              <div class="grid p-fluid">
+                <div class="col-12 md:col-12">
+                  <div class="card">
+                    <form [formGroup]="statusForms">
+                      <b>Observaciones</b><br><hr>
+                      <textarea rows="5" cols="30" placeholder="" pInputTextarea  formControlName="observacion"></textarea>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <ng-template pTemplate="footer">
+                    <button pButton pRipple type="button" label="Cancelar" class="p-button-outlined p-button-secondary" (click)="cancelar()"></button>
+                    <button pButton pRipple type="button" label="Aprobar" class="p-button-outlined p-button-success" (click)="aprobar()"></button>
+              </ng-template>
+            </p-dialog>
+
+            <p-dialog header="Rechazar Compra: {{CompraCodigo}}" [(visible)]="displayRechazar" [modal]="true" showEffect="fade" [style]="{width: '50vw'}" [breakpoints]="{'960px': '75vw'}">
+              <div class="grid p-fluid">
+                <div class="col-12 md:col-12">
+                  <div class="card">
+                    <form [formGroup]="statusForms">
+                      <b>Observaciones</b><br><hr>
+                      <textarea rows="5" cols="30" placeholder="" pInputTextarea  formControlName="observacion"></textarea>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <ng-template pTemplate="footer">
+                      <button pButton pRipple type="button" label="Cancelar" class="p-button-outlined p-button-secondary" (click)="cancelar()"></button>
+                      <button pButton pRipple type="button" label="Rechazar" class="p-button-outlined p-button-warning" [disabled]="statusForms.invalid" (click)="rechazar()"></button>
+              </ng-template>
+            </p-dialog>
+
+            <p-dialog header="Eliminar Compra: {{CompraCodigo}}" [(visible)]="displayEliminar" [modal]="true" showEffect="fade" [style]="{width: '50vw'}"  [breakpoints]="{'960px': '75vw'}">
+              <div class="grid p-fluid">
+                <div class="col-12 md:col-12">
+                  <div class="card">
+                    <form [formGroup]="statusForms">
+                      <b>Observaciones</b><br><hr>
+                      <textarea rows="5" cols="30" placeholder="" pInputTextarea  formControlName="observacion"></textarea>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <ng-template pTemplate="footer">
+                    <button pButton pRipple type="button" label="Cancelar" class="p-button-outlined p-button-secondary" (click)="cancelar()"></button>
+                    <button pButton pRipple type="button" label="Eliminar" class="p-button-outlined p-button-danger" [disabled]="statusForms.invalid" (click)="eliminar()"></button>
+              </ng-template>
+            </p-dialog>
+
+            <p-dialog header="Desembolso: {{CompraCodigo}}" [(visible)]="displayDesembolso" [modal]="true" showEffect="fade" [style]="{width: '40vw', height: '550px'}"  [breakpoints]="{'960px': '75vw'}">
+              <div class="grid p-fluid">
+                <div class="col-12 md:col-12">
+                  <div class="card">
+                    <form [formGroup]="desembolsoForms">
+
+                      <div class="grid formgrid">
+                        <div class="col-12 mb-2 lg:col-6 lg:mb-0">
+                          <b>Fecha Desembolso</b> <small *ngIf="CompraFechaDesembolso" style="color: red;"> ({{CompraFechaDesembolso | date:'yyyy-MM-dd'}})</small><br><hr>
+                          <p-calendar [showIcon]="true" inputId="icon" formControlName="fecha_manual" dateFormat="yy-mm-dd"></p-calendar>
+                        </div>
+                        <div class="col-12 mb-2 lg:col-6 lg:mb-0">
+                          <b>N° Comprobante</b> <small *ngIf="CompraNComprobante" style="color: red;"> ({{CompraNComprobante}})</small><br><hr>
+                          <input type="text" pInputText placeholder="" formControlName="comprobante">
+                        </div>
+                      </div>
+
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <ng-template pTemplate="footer">
+                    <button pButton pRipple type="button" label="Cancelar" class="p-button-outlined p-button-secondary" (click)="cancelar()"></button>
+                    <button pButton pRipple type="button" label="Guardar" class="p-button-outlined p-button-primary" [disabled]="desembolsoForms.invalid" (click)="guardaDesembolso()"></button>
+              </ng-template>
+            </p-dialog>
+
+            <p-dialog header="Descargo: {{CompraCodigo}}" [(visible)]="displayDescargo" [modal]="true" showEffect="fade" [style]="{width: '40vw', height: '550px'}"  [breakpoints]="{'960px': '75vw'}">
+              <div class="grid p-fluid">
+                <div class="col-12 md:col-12">
+                  <div class="card">
+                    <form [formGroup]="descargoForms">
+                          <b>Fecha Descargo</b> <small *ngIf="CompraFechaDescargo" style="color: red;"> ({{CompraFechaDescargo | date:'yyyy-MM-dd'}})</small><br><hr>
+                          <p-calendar [showIcon]="true" inputId="icon" formControlName="fecha_manual" dateFormat="yy-mm-dd"></p-calendar>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <ng-template pTemplate="footer">
+                    <button pButton pRipple type="button" label="Cancelar" class="p-button-outlined p-button-secondary" (click)="cancelar()"></button>
+                    <button pButton pRipple type="button" label="Guardar" class="p-button-outlined p-button-primary" [disabled]="descargoForms.invalid" (click)="guardaDescargo()"></button>
+              </ng-template>
+            </p-dialog>
+
+            <p-dialog header="Calidad: {{CompraCodigo}}" [(visible)]="displayCalidad" [modal]="true" showEffect="fade" [style]="{width: '40vw', height: '650px'}"  [breakpoints]="{'960px': '75vw'}">
+              <form [formGroup]="calidadForms">
+
+                            <p-table [value]="CompraDepatamentos">
+                              <ng-template pTemplate="header">
+                                  <tr>
+                                      <th>Ciudad</th>
+                                      <th>Cantidad</th>
+                                      <th>Fecha Programada</th>
+                                      <th>Observaciones</th>
+                                  </tr>
+                              </ng-template>
+
+                              <ng-template pTemplate="body" let-product>
+                                  <tr *ngIf="product.ciudad=='LA PAZ'"  style="height: 450px; vertical-align: top;">
+                                      <td>{{ product.ciudad }}</td>
+                                      <td>{{ product.valor }}</td>
+                                      <td><p-calendar [showIcon]="true" inputId="icon" dateFormat="yy-mm-dd" formControlName="fechaProgCalidad" [style]="{ 'width': '150px' }"></p-calendar></td>
+                                      <td><textarea rows="2" cols="30" placeholder="" pInputTextarea formControlName="obsCalidad" ></textarea></td>
+                                  </tr>
+                              </ng-template>
+                            </p-table>
+                          </form>
+
+                <ng-template pTemplate="footer">
+                      <button pButton pRipple type="button" label="Cancelar" class="p-button-outlined p-button-secondary" (click)="cancelar()"></button>
+                      <button pButton pRipple type="button" label="Guardar" class="p-button-outlined p-button-primary" [disabled]="calidadForms.invalid" (click)="guardaDescargo()"></button>
+                </ng-template>
+
+            </p-dialog>
+
+          </div>
+
+      </div>
+
+
+
+
+
+</div>
+
